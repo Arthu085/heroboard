@@ -1,9 +1,9 @@
-const NewProject = () => {
-  return (
-    <>
-    <h1>NewProject</h1>
-    </>
-  )
-}
+import Sidebar from "../../components/Sidebar";
 
-export default NewProject
+export default function NewProject() {
+	return (
+		<>
+			<Sidebar />
+		</>
+	);
+}
