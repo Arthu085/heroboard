@@ -37,7 +37,7 @@ export default function Sidebar() {
 					md:translate-x-0
 				`}>
 				<h1 className="text-2xl font-bold text-white mt-7 md:mt-4 mb-5 whitespace-nowrap transition-opacity duration-300 opacity-100">
-					HeroBoard
+					Hero Board
 				</h1>
 
 				<nav className="flex flex-col gap-4 flex-1 max-h-[1000px] overflow-y-auto overflow-x-hidden pr-2 custom-scrollbar">
@@ -61,7 +61,7 @@ export default function Sidebar() {
 				</nav>
 
 				<footer className="text-white text-sm whitespace-nowrap transition-opacity duration-300 opacity-100 mb-5">
-					© 2025 HeroBoard
+					© 2025 Hero Board
 				</footer>
 			</aside>
 		</>

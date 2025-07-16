@@ -14,7 +14,7 @@ export default function Container({
 	subtitle,
 }: ContainerProps) {
 	return (
-		<div className="flex flex-col min-h-screen md:ml-58 ml-3 mt-15">
+		<div className="flex flex-col min-h-screen md:ml-58 ml-3 mt-15 mr-5">
 			<main className="flex-grow">
 				<h1 className="text-xl font-semibold mb-4 text-left">{title}</h1>
 				<h2 className="text-lg  mb-4 text-left">{subtitle}</h2>
