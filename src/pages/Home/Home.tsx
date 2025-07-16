@@ -5,7 +5,8 @@ import Buttons from "../../components/Buttons";
 import Container from "../../components/Container";
 import Sidebar from "../../components/Sidebar";
 import Table, { type Header } from "../../components/Table";
-import DeleteModal from "./DeleteModal";
+import DeleteProjectModal from "./DeleteProjectModal";
+import UpdateProjectModal from "./UpdateProjectModal";
 
 export default function Home() {
 	type Project = {
@@ -19,6 +20,7 @@ export default function Home() {
 	const [projects, setProjects] = useState<Project[]>([]);
 	const [message, setMessage] = useState("");
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
+	const [openUpdateModal, setOpenUpdateModal] = useState(false);
 	const [idProject, setIdProject] = useState<number | null>(null);
 
 	const headers: Header<Project>[] = [
@@ -53,6 +55,8 @@ export default function Home() {
 		loadProjects();
 	}, []);
 
+	const selectedProject = projects.find((p) => p.id === idProject) ?? null;
+
 	function handleOpenDelete(id: number) {
 		setOpenDeleteModal(true);
 		setIdProject(id);
@@ -60,6 +64,15 @@ export default function Home() {
 
 	function handleCloseDelete() {
 		setOpenDeleteModal(false);
+	}
+
+	function handleOpenUpdate(id: number) {
+		setOpenUpdateModal(true);
+		setIdProject(id);
+	}
+
+	function handleCloseUpdate() {
+		setOpenUpdateModal(false);
 	}
 
 	return (
@@ -73,7 +86,12 @@ export default function Home() {
 					data={projects}
 					renderActions={(row) => (
 						<div className="flex flex-row gap-3">
-							<Buttons text="Editar" title="Editar projeto" variant="primary" />
+							<Buttons
+								text="Editar"
+								title="Editar projeto"
+								variant="primary"
+								onClick={() => handleOpenUpdate(row.id)}
+							/>
 							<Buttons
 								text="Excluir"
 								title="Excluir projeto"
@@ -84,10 +102,16 @@ export default function Home() {
 					)}
 				/>
 			</Container>
-			<DeleteModal
+			<DeleteProjectModal
 				openDeleteModal={openDeleteModal}
 				closeDeleteModal={handleCloseDelete}
 				idProject={idProject}
+				onSuccess={loadProjects}
+			/>
+			<UpdateProjectModal
+				openUpdateModal={openUpdateModal}
+				closeUpdateModal={handleCloseUpdate}
+				project={selectedProject}
 				onSuccess={loadProjects}
 			/>
 		</>

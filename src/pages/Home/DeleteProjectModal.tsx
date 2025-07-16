@@ -12,7 +12,7 @@ type ModalDeleteProps = {
 	onSuccess: () => void;
 };
 
-export default function DeleteModal({
+export default function DeleteProjectModal({
 	openDeleteModal,
 	closeDeleteModal,
 	idProject,
@@ -26,8 +26,8 @@ export default function DeleteModal({
 			if (!idProject) return;
 			const response = await deleteProject(idProject);
 			setMessage(response.message);
+			await onSuccess();
 			closeDeleteModal();
-			onSuccess();
 		} catch (error: any) {
 			alert(error.message || "Erro ao excluir projeto");
 		}
@@ -43,7 +43,7 @@ export default function DeleteModal({
 				<>
 					<Buttons
 						text="Excluir"
-						variant="success"
+						variant="warning"
 						disabled={disabled}
 						onClick={() => handleDeleteProject()}
 					/>

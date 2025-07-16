@@ -17,6 +17,11 @@ type DeleteProjectResponse = {
 	message: string;
 };
 
+type UpdateProjectsResponse = {
+	message: string;
+	data: Project[];
+};
+
 export async function createProject(
 	name: string,
 	description: string,
@@ -53,6 +58,29 @@ export async function deleteProject(
 		const response = await api.delete(`/projects/${id}`);
 		return {
 			message: response.data.message,
+		};
+	} catch (error: any) {
+		throw error.response?.data || { message: "Erro de conexão" };
+	}
+}
+
+export async function updateProject(
+	id: number,
+	name?: string,
+	description?: string,
+	status?: string,
+	responsible?: string,
+): Promise<UpdateProjectsResponse> {
+	try {
+		const response = await api.patch(`/projects/${id}`, {
+			name,
+			description,
+			responsible,
+			status,
+		});
+		return {
+			message: response.data.message,
+			data: response.data.data,
 		};
 	} catch (error: any) {
 		throw error.response?.data || { message: "Erro de conexão" };
