@@ -3,6 +3,7 @@ import { useState } from "react";
 import Container from "../../components/Container";
 import Sidebar from "../../components/Sidebar";
 import Form from "../../components/Form";
+import { createProject } from "../../api/projectsApi";
 
 export default function NewProject() {
 	const [formData, setFormData] = useState({
@@ -30,10 +31,24 @@ export default function NewProject() {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setDisabled(true);
-		console.log(formData);
+
+		try {
+			const newProject = await createProject(
+				formData.name,
+				formData.description,
+				formData.responsible,
+			);
+
+			console.log("Projeto criado com sucesso:", newProject);
+			setFormData({ name: "", description: "", responsible: "" });
+		} catch (error: any) {
+			alert(error.message || "Erro ao criar projeto");
+		} finally {
+			setDisabled(false);
+		}
 	};
 
 	return (
