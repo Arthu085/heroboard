@@ -6,6 +6,7 @@ type Project = {
 	description: string;
 	responsible: string;
 	status: string;
+	message: string;
 };
 
 type FindAllProjectsResponse = {
@@ -25,7 +26,7 @@ type UpdateProjectsResponse = {
 export async function createProject(
 	name: string,
 	description: string,
-	responsible: string,
+	responsible: string
 ): Promise<Project> {
 	try {
 		const response = await api.post("/projects", {
@@ -52,7 +53,7 @@ export async function findAllProjects(): Promise<FindAllProjectsResponse> {
 }
 
 export async function deleteProject(
-	id: number,
+	id: number
 ): Promise<DeleteProjectResponse> {
 	try {
 		const response = await api.delete(`/projects/${id}`);
@@ -69,7 +70,7 @@ export async function updateProject(
 	name?: string,
 	description?: string,
 	status?: string,
-	responsible?: string,
+	responsible?: string
 ): Promise<UpdateProjectsResponse> {
 	try {
 		const response = await api.patch(`/projects/${id}`, {

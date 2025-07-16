@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { updateProject } from "../../api/projectsApi";
+import { useLoading } from "../../hooks/useLoading";
+import { useToast } from "../../hooks/useToast";
 
 import Modal from "../../components/Modal";
 import Buttons from "../../components/Buttons";
 import Form from "../../components/Form";
+import LoadingScreen from "../../components/LoadingScreen";
 
 type UpdateProjectModalProps = {
 	openUpdateModal: boolean;
@@ -23,15 +26,18 @@ export default function UpdateProjectModal({
 	openUpdateModal,
 	closeUpdateModal,
 	project,
-	disabled = false,
 	onSuccess,
 }: UpdateProjectModalProps) {
+	const { isLoading, setIsLoading } = useLoading();
+	const { addToast } = useToast();
+
 	const [formData, setFormData] = useState({
 		name: "",
 		description: "",
 		responsible: "",
 		status: "",
 	});
+	const [disabled, setDisabled] = useState(false);
 
 	const statusReverseMap: Record<string, string> = {
 		Pendente: "pending",
@@ -76,7 +82,7 @@ export default function UpdateProjectModal({
 	];
 
 	const handleChange = (
-		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
 	) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
@@ -101,30 +107,37 @@ export default function UpdateProjectModal({
 
 		if (formData.status !== project.status) {
 			if (formData.status === "") {
-				alert("Selecione um status válido");
+				addToast("Selecione um status válido", "warning");
 				return;
 			}
 			updatedFields.status = formData.status;
 		}
 
 		if (Object.keys(updatedFields).length === 0) {
-			alert("Nenhuma alteração para salvar");
+			addToast("Nenhuma alteração para salvar", "warning");
 			return;
 		}
 
+		setDisabled(true);
+		setIsLoading(true);
+
 		try {
-			await updateProject(
+			const response = await updateProject(
 				project.id,
 				updatedFields.name,
 				updatedFields.description,
 				updatedFields.status,
-				updatedFields.responsible,
+				updatedFields.responsible
 			);
 
+			addToast(response.message, "success");
 			await onSuccess();
 			closeUpdateModal();
 		} catch (error: any) {
-			alert(error.message || "Erro ao atualizar projeto");
+			addToast(error.message || "Erro ao atualizar projeto", "error");
+		} finally {
+			setDisabled(false);
+			setIsLoading(false);
 		}
 	};
 
@@ -134,32 +147,35 @@ export default function UpdateProjectModal({
 	};
 
 	return (
-		<Modal
-			size="average"
-			isOpen={openUpdateModal}
-			onClose={closeUpdateModal}
-			title={`Atualizar projeto de nº ${project?.id ?? ""}`}
-			content={
-				<Form
-					fields={fields}
-					values={formData}
-					onChange={handleChange}
-					onSubmit={handleSubmit}
-					title=""
-					hideSubmitButton={true}
-					classForm="w-full mx-auto pl-0.5 pr-0.5"
-				/>
-			}
-			actions={
-				<>
-					<Buttons
-						text="Editar"
-						variant="primary"
-						disabled={disabled}
-						onClick={handleUpdateProject}
+		<>
+			{isLoading && <LoadingScreen />}
+			<Modal
+				size="average"
+				isOpen={openUpdateModal}
+				onClose={closeUpdateModal}
+				title={`Atualizar projeto de nº ${project?.id ?? ""}`}
+				content={
+					<Form
+						fields={fields}
+						values={formData}
+						onChange={handleChange}
+						onSubmit={handleSubmit}
+						title=""
+						hideSubmitButton={true}
+						classForm="w-full mx-auto pl-0.5 pr-0.5"
 					/>
-				</>
-			}
-		/>
+				}
+				actions={
+					<>
+						<Buttons
+							text="Editar"
+							variant="primary"
+							disabled={disabled}
+							onClick={handleUpdateProject}
+						/>
+					</>
+				}
+			/>
+		</>
 	);
 }

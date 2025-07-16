@@ -1,11 +1,17 @@
 import { useState } from "react";
+import { createProject } from "../../api/projectsApi";
+import { useLoading } from "../../hooks/useLoading";
+import { useToast } from "../../hooks/useToast";
 
 import Container from "../../components/Container";
 import Sidebar from "../../components/Sidebar";
 import Form from "../../components/Form";
-import { createProject } from "../../api/projectsApi";
+import LoadingScreen from "../../components/LoadingScreen";
 
 export default function NewProject() {
+	const { isLoading, setIsLoading } = useLoading();
+	const { addToast } = useToast();
+
 	const [formData, setFormData] = useState({
 		name: "",
 		description: "",
@@ -14,7 +20,11 @@ export default function NewProject() {
 	const [disabled, setDisabled] = useState(false);
 
 	const fields = [
-		{ name: "name", label: "Nome do Projeto", placeholder: "Digite o nome" },
+		{
+			name: "name",
+			label: "Nome do Projeto",
+			placeholder: "Digite o nome",
+		},
 		{
 			name: "description",
 			label: "Descrição",
@@ -27,31 +37,37 @@ export default function NewProject() {
 		},
 	];
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChange = (
+		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+	) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setDisabled(true);
+		setIsLoading(true);
 
 		try {
-			const newProject = await createProject(
+			const response = await createProject(
 				formData.name,
 				formData.description,
-				formData.responsible,
+				formData.responsible
 			);
 
 			setFormData({ name: "", description: "", responsible: "" });
+			addToast(response.message, "success");
 		} catch (error: any) {
-			alert(error.message || "Erro ao criar projeto");
+			addToast(error.message || "Erro ao criar projeto", "error");
 		} finally {
 			setDisabled(false);
+			setIsLoading(false);
 		}
 	};
 
 	return (
 		<>
+			{isLoading && <LoadingScreen />}
 			<Sidebar />
 			<Container
 				title="Bem-vindo(a) ao cadastro de projetos!"
@@ -65,6 +81,7 @@ export default function NewProject() {
 					buttonText="Cadastrar"
 					buttonTitle="Cadastrar projeto"
 					disabled={disabled}
+					required={true}
 				/>
 			</Container>
 		</>

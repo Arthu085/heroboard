@@ -21,6 +21,7 @@ type SimpleFormProps = {
 	disabled?: boolean;
 	hideSubmitButton?: boolean;
 	classForm?: string;
+	required?: boolean;
 };
 
 export default function Form({
@@ -34,6 +35,7 @@ export default function Form({
 	disabled = false,
 	hideSubmitButton = false,
 	classForm = "bg-gray-900 shadow-md rounded-xl p-6 w-full mt-5 max-w-3xl mx-auto",
+	required = false,
 }: SimpleFormProps) {
 	return (
 		<form onSubmit={onSubmit} className={classForm}>
@@ -57,7 +59,7 @@ export default function Form({
 							value={values[name] || ""}
 							onChange={onChange}
 							className="w-full border rounded-lg p-2 bg-gray-700 border-gray-700 text-white"
-							required={false}>
+							required={required}>
 							<option value="">{placeholder || "Selecione uma opção"}</option>
 							{options.map(({ value, label }) => (
 								<option key={value} value={value}>
@@ -74,7 +76,7 @@ export default function Form({
 							onChange={onChange}
 							placeholder={placeholder}
 							className="w-full border rounded-lg p-2 bg-gray-700 border-gray-700 text-white"
-							required={false}
+							required={required}
 						/>
 					)}
 				</div>

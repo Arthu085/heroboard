@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { findAllProjects } from "../../api/projectsApi";
+import { useLoading } from "../../hooks/useLoading";
+import { useToast } from "../../hooks/useToast";
 
 import Buttons from "../../components/Buttons";
 import Container from "../../components/Container";
@@ -7,6 +9,7 @@ import Sidebar from "../../components/Sidebar";
 import Table, { type Header } from "../../components/Table";
 import DeleteProjectModal from "./DeleteProjectModal";
 import UpdateProjectModal from "./UpdateProjectModal";
+import LoadingScreen from "../../components/LoadingScreen";
 
 export default function Home() {
 	type Project = {
@@ -17,8 +20,10 @@ export default function Home() {
 		status: string;
 	};
 
+	const { isLoading, setIsLoading } = useLoading();
+	const { addToast } = useToast();
+
 	const [projects, setProjects] = useState<Project[]>([]);
-	const [message, setMessage] = useState("");
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
 	const [openUpdateModal, setOpenUpdateModal] = useState(false);
 	const [idProject, setIdProject] = useState<number | null>(null);
@@ -37,6 +42,8 @@ export default function Home() {
 	};
 
 	const loadProjects = async () => {
+		setIsLoading(true);
+
 		try {
 			const response = await findAllProjects();
 			const projectsWithTranslatedStatus = response.data.map((project) => ({
@@ -44,10 +51,10 @@ export default function Home() {
 				status: statusMap[project.status] || project.status,
 			}));
 			setProjects(projectsWithTranslatedStatus);
-
-			setMessage(response.message);
 		} catch (error: any) {
-			alert(error.message || "Erro ao carregar projetos");
+			addToast(error.message || "Erro ao carregar projetos", "error");
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -77,6 +84,7 @@ export default function Home() {
 
 	return (
 		<>
+			{isLoading && <LoadingScreen />}
 			<Sidebar />
 			<Container
 				title="Bem-vindo(a) à lista de projetos!"
