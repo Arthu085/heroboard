@@ -8,6 +8,11 @@ type Project = {
 	status: string;
 };
 
+type FindAllProjectsResponse = {
+	message: string;
+	data: Project[];
+};
+
 export async function createProject(
 	name: string,
 	description: string,
@@ -20,6 +25,18 @@ export async function createProject(
 			responsible,
 		});
 		return response.data;
+	} catch (error: any) {
+		throw error.response?.data || { message: "Erro de conexão" };
+	}
+}
+
+export async function findAllProjects(): Promise<FindAllProjectsResponse> {
+	try {
+		const response = await api.get("/projects");
+		return {
+			message: response.data.message,
+			data: response.data.data,
+		};
 	} catch (error: any) {
 		throw error.response?.data || { message: "Erro de conexão" };
 	}
