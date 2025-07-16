@@ -5,6 +5,7 @@ import Buttons from "../../components/Buttons";
 import Container from "../../components/Container";
 import Sidebar from "../../components/Sidebar";
 import Table, { type Header } from "../../components/Table";
+import DeleteModal from "./DeleteModal";
 
 export default function Home() {
 	type Project = {
@@ -17,6 +18,8 @@ export default function Home() {
 
 	const [projects, setProjects] = useState<Project[]>([]);
 	const [message, setMessage] = useState("");
+	const [openDeleteModal, setOpenDeleteModal] = useState(false);
+	const [idProject, setIdProject] = useState<number | null>(null);
 
 	const headers: Header<Project>[] = [
 		{ label: "Nome", key: "name" },
@@ -31,24 +34,33 @@ export default function Home() {
 		completed: "Concluído",
 	};
 
+	const loadProjects = async () => {
+		try {
+			const response = await findAllProjects();
+			const projectsWithTranslatedStatus = response.data.map((project) => ({
+				...project,
+				status: statusMap[project.status] || project.status,
+			}));
+			setProjects(projectsWithTranslatedStatus);
+
+			setMessage(response.message);
+		} catch (error: any) {
+			alert(error.message || "Erro ao carregar projetos");
+		}
+	};
+
 	useEffect(() => {
-		const loadProjects = async () => {
-			try {
-				const response = await findAllProjects();
-				const projectsWithTranslatedStatus = response.data.map((project) => ({
-					...project,
-					status: statusMap[project.status] || project.status,
-				}));
-				setProjects(projectsWithTranslatedStatus);
-
-				setMessage(response.message);
-			} catch (error: any) {
-				alert(error.message || "Erro ao carregar projetos");
-			}
-		};
-
 		loadProjects();
 	}, []);
+
+	function handleOpenDelete(id: number) {
+		setOpenDeleteModal(true);
+		setIdProject(id);
+	}
+
+	function handleCloseDelete() {
+		setOpenDeleteModal(false);
+	}
 
 	return (
 		<>
@@ -66,11 +78,18 @@ export default function Home() {
 								text="Excluir"
 								title="Excluir projeto"
 								variant="warning"
+								onClick={() => handleOpenDelete(row.id)}
 							/>
 						</div>
 					)}
 				/>
 			</Container>
+			<DeleteModal
+				openDeleteModal={openDeleteModal}
+				closeDeleteModal={handleCloseDelete}
+				idProject={idProject}
+				onSuccess={loadProjects}
+			/>
 		</>
 	);
 }

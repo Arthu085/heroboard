@@ -38,7 +38,7 @@ export default function Buttons({
 			break;
 		default:
 			bgClass = "bg-gray-500";
-			hoverClass = "hover:bg-gray-800";
+			hoverClass = "hover:bg-gray-700";
 	}
 
 	const disabledClass = "bg-gray-400 cursor-not-allowed hover:bg-gray-400";

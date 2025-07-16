@@ -42,7 +42,6 @@ export default function NewProject() {
 				formData.responsible,
 			);
 
-			console.log("Projeto criado com sucesso:", newProject);
 			setFormData({ name: "", description: "", responsible: "" });
 		} catch (error: any) {
 			alert(error.message || "Erro ao criar projeto");

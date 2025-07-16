@@ -13,6 +13,10 @@ type FindAllProjectsResponse = {
 	data: Project[];
 };
 
+type DeleteProjectResponse = {
+	message: string;
+};
+
 export async function createProject(
 	name: string,
 	description: string,
@@ -36,6 +40,19 @@ export async function findAllProjects(): Promise<FindAllProjectsResponse> {
 		return {
 			message: response.data.message,
 			data: response.data.data,
+		};
+	} catch (error: any) {
+		throw error.response?.data || { message: "Erro de conexão" };
+	}
+}
+
+export async function deleteProject(
+	id: number,
+): Promise<DeleteProjectResponse> {
+	try {
+		const response = await api.delete(`/projects/${id}`);
+		return {
+			message: response.data.message,
 		};
 	} catch (error: any) {
 		throw error.response?.data || { message: "Erro de conexão" };
