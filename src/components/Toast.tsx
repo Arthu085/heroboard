@@ -26,11 +26,11 @@ export default function Toast({ toasts }: ToastProps) {
 						className={`px-4 py-2 rounded shadow text-white transition-all
               ${
 								toast.type === "success"
-									? "bg-green-500"
+									? "bg-green-600"
 									: toast.type === "error"
 									? "bg-red-500"
 									: toast.type === "warning"
-									? "bg-yellow-500"
+									? "bg-yellow-700"
 									: "bg-blue-500"
 							}`}>
 						{toast.message}

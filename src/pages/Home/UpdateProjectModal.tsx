@@ -46,7 +46,7 @@ export default function UpdateProjectModal({
 	};
 
 	useEffect(() => {
-		if (project) {
+		if (project && openUpdateModal) {
 			setFormData({
 				name: project.name,
 				description: project.description,
@@ -54,7 +54,7 @@ export default function UpdateProjectModal({
 				status: statusReverseMap[project.status] || "",
 			});
 		}
-	}, [project]);
+	}, [project, openUpdateModal]);
 
 	const fields = [
 		{ name: "name", label: "Nome", placeholder: "Digite o nome" },
@@ -82,7 +82,7 @@ export default function UpdateProjectModal({
 	];
 
 	const handleChange = (
-		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 	) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
@@ -102,10 +102,9 @@ export default function UpdateProjectModal({
 			updatedFields.description = formData.description;
 		if (formData.responsible !== project.responsible)
 			updatedFields.responsible = formData.responsible;
-		if (formData.status !== project.status)
-			updatedFields.status = formData.status;
 
-		if (formData.status !== project.status) {
+		// Apenas essa verificação já resolve
+		if (formData.status !== statusReverseMap[project.status]) {
 			if (formData.status === "") {
 				addToast("Selecione um status válido", "warning");
 				return;
@@ -113,6 +112,7 @@ export default function UpdateProjectModal({
 			updatedFields.status = formData.status;
 		}
 
+		// Agora essa verificação funciona corretamente
 		if (Object.keys(updatedFields).length === 0) {
 			addToast("Nenhuma alteração para salvar", "warning");
 			return;
@@ -127,7 +127,7 @@ export default function UpdateProjectModal({
 				updatedFields.name,
 				updatedFields.description,
 				updatedFields.status,
-				updatedFields.responsible
+				updatedFields.responsible,
 			);
 
 			addToast(response.message, "success");
