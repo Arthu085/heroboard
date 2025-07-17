@@ -171,7 +171,7 @@ export default function Home() {
 						</div>
 					)}
 				/>
-				{!statusFilter && (
+				{!statusFilter && projects.length > 0 && (
 					<div className="flex flex-row gap-5 mt-5 w-[300px] h-10 ml-auto">
 						<Buttons
 							disabled={isPrevDisabled}
