@@ -1,6 +1,7 @@
 type ButtonsProps = {
 	variant?: "primary" | "info" | "success" | "warning" | "default";
 	text: string;
+	disabledText?: string;
 	disabled?: boolean;
 	title?: string;
 	onClick?: () => void;
@@ -10,6 +11,7 @@ type ButtonsProps = {
 export default function Buttons({
 	variant = "default",
 	text,
+	disabledText = "Carregando...",
 	title,
 	onClick,
 	type = "button",
@@ -41,18 +43,18 @@ export default function Buttons({
 			hoverClass = "hover:bg-gray-700";
 	}
 
-	const disabledClass = "bg-gray-400 cursor-not-allowed hover:bg-gray-400";
-
 	return (
 		<button
 			type={type}
 			title={title}
 			className={`${
-				disabled ? disabledClass : bgClass + " " + hoverClass
-			} text-white px-4 py-2 rounded transition-colors duration-200 cursor-pointer w-full`}
+				disabled
+					? "bg-gray-400 cursor-not-allowed hover:bg-gray-400"
+					: `${bgClass} ${hoverClass} cursor-pointer`
+			} text-white px-4 py-2 rounded transition-colors duration-200 w-full`}
 			onClick={disabled ? undefined : onClick}
 			disabled={disabled}>
-			{disabled ? "Carregando..." : text}
+			{disabled ? disabledText : text}
 		</button>
 	);
 }

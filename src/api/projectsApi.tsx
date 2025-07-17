@@ -9,9 +9,16 @@ type Project = {
 	message: string;
 };
 
+type PaginatedProjects = {
+	data: Project[];
+	total: number;
+	page: number;
+	limit: number;
+};
+
 type FindAllProjectsResponse = {
 	message: string;
-	data: Project[];
+	data: PaginatedProjects;
 };
 
 type DeleteProjectResponse = {
@@ -26,7 +33,7 @@ type UpdateProjectsResponse = {
 export async function createProject(
 	name: string,
 	description: string,
-	responsible: string
+	responsible: string,
 ): Promise<Project> {
 	try {
 		const response = await api.post("/projects", {
@@ -40,9 +47,20 @@ export async function createProject(
 	}
 }
 
-export async function findAllProjects(): Promise<FindAllProjectsResponse> {
+export async function findAllProjects(
+	page?: number,
+	limit?: number,
+	status?: string,
+): Promise<FindAllProjectsResponse> {
 	try {
-		const response = await api.get("/projects");
+		const params = new URLSearchParams();
+
+		if (page !== undefined) params.append("page", page.toString());
+		if (limit !== undefined) params.append("limit", limit.toString());
+		if (status) params.append("status", status);
+
+		const response = await api.get(`/projects?${params.toString()}`);
+
 		return {
 			message: response.data.message,
 			data: response.data.data,
@@ -53,7 +71,7 @@ export async function findAllProjects(): Promise<FindAllProjectsResponse> {
 }
 
 export async function deleteProject(
-	id: number
+	id: number,
 ): Promise<DeleteProjectResponse> {
 	try {
 		const response = await api.delete(`/projects/${id}`);
@@ -70,7 +88,7 @@ export async function updateProject(
 	name?: string,
 	description?: string,
 	status?: string,
-	responsible?: string
+	responsible?: string,
 ): Promise<UpdateProjectsResponse> {
 	try {
 		const response = await api.patch(`/projects/${id}`, {
