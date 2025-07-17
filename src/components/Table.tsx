@@ -17,7 +17,7 @@ export default function Table<T>({
 	renderActions,
 }: TableProps<T>) {
 	return (
-		<div className="w-full overflow-x-auto">
+		<div className="w-full overflow-x-auto scrollbar-custom">
 			<table className="w-full table-auto border-collapse rounded-lg overflow-hidden">
 				{data.length > 0 && (
 					<thead className="bg-gray-900 ">
